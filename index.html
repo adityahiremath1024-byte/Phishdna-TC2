@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PhishDNA v2 — Cyber Threat Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<canvas id="bgCanvas"></canvas>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <div class="logo-ic">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M7 2c0 4 4 4 4 8s-4 4-4 8M11 2c0 4 4 4 4 8s-4 4-4 8M15 2c0 4-4 4-4 8s4 4 4 8" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="4" y1="7" x2="18" y2="7" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4"/>
+          <line x1="4" y1="11" x2="18" y2="11" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4"/>
+          <line x1="4" y1="15" x2="18" y2="15" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4"/>
+        </svg>
+      </div>
+      <div>
+        <div><span class="logo-nm">PhishDNA</span><span class="logo-ver">v2.0</span></div>
+        <div class="logo-sub">CYBER THREAT INTELLIGENCE</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <div class="stat-pill" id="scanCountPill" style="display:none"></div>
+      <div class="live-badge"><span class="live-dot"></span>OFFLINE</div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <section class="hero">
+    <div class="hero-l">
+      <div class="hero-ey">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#38bdf8" stroke-width="1.2"/><circle cx="5" cy="5" r="2" fill="#38bdf8"/></svg>
+        100% OFFLINE · 5 PLATFORMS · 12 ATTACK TYPES
+      </div>
+      <h1 class="hero-t">Decode the attack<br><span class="hero-ac">before it strikes</span></h1>
+      <p class="hero-d">Paste any suspicious email, WhatsApp message, Instagram DM, SMS, or URL. PhishDNA maps the exact threat pattern and tells you what the attacker is trying to steal.</p>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-n">12</span><span class="hstat-l">Attack Types</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-n">5</span><span class="hstat-l">Platforms</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-n">0ms</span><span class="hstat-l">Server Latency</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-n">∞</span><span class="hstat-l">Offline Scans</span></div>
+      </div>
+      <div class="offline-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#4ade80" stroke-width="1.2"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#4ade80" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        No server needed — open this file and it works instantly
+      </div>
+    </div>
+    <div class="hero-r">
+      <div class="globe-wrap">
+        <canvas id="globeCanvas" width="320" height="320"></canvas>
+        <div class="globe-label gl-1">
+          <span class="gl-dot" style="background:#f43f5e"></span>Active Threats
+        </div>
+        <div class="globe-label gl-2">
+          <span class="gl-dot" style="background:#38bdf8"></span>Real-time Analysis
+        </div>
+        <div class="globe-label gl-3">
+          <span class="gl-dot" style="background:#4ade80"></span>Protected
+        </div>
+        <div class="globe-ring gr-1"></div>
+        <div class="globe-ring gr-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="plat-tabs" id="platTabs">
+    <button class="ptab ae" data-plat="email" onclick="switchPlat('email')">✉ Email</button>
+    <button class="ptab" data-plat="whatsapp" onclick="switchPlat('whatsapp')">💬 WhatsApp</button>
+    <button class="ptab" data-plat="instagram" onclick="switchPlat('instagram')">📸 Instagram</button>
+    <button class="ptab" data-plat="sms" onclick="switchPlat('sms')">📱 SMS</button>
+    <button class="ptab" data-plat="url" onclick="switchPlat('url')">🔗 URL / Link</button>
+  </div>
+
+  <div class="scan-card pe" id="scanCard">
+    <div class="scan-hdr">
+      <div class="scan-plat-badge" id="platBadge" style="color:#38bdf8">✉ Email Scanner</div>
+      <div class="presets" id="presetsBar"></div>
+    </div>
+    <div class="ta-wrap">
+      <textarea class="ta" id="mainTA" placeholder="Paste a suspicious email here..." oninput="onInput()" spellcheck="false"></textarea>
+      <button class="clr-btn" id="clrBtn" style="display:none" onclick="clearAll()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="scan-ftr">
+      <span class="cc" id="charCount">No input</span>
+      <button class="scan-btn" id="scanBtn" onclick="doScan()" disabled>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 7l2 2 3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Analyze with PhishDNA
+      </button>
+    </div>
+  </div>
+
+  <div class="err-banner" id="errBanner" style="display:none">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#f43f5e" stroke-width="1.5"/><path d="M8 5v3.5M8 10.5v.5" stroke="#f43f5e" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span id="errMsg"></span>
+  </div>
+
+  <div id="resultWrap"></div>
+  <div id="histWrap"></div>
+
+  <div class="ag-sec" id="attackGrid">
+    <div class="ag-lbl">Threat Types PhishDNA Detects</div>
+    <div class="ag" id="agGrid"></div>
+  </div>
+
+</main>
+
+<footer class="ftr">
+  <span>PhishDNA v2.0</span><span class="fs">·</span>
+  <span>5 Platforms</span><span class="fs">·</span>
+  <span>12 Attack Types</span><span class="fs">·</span>
+  <span>100% Offline</span><span class="fs">·</span>
+  <span>For educational use</span>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/globe.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
